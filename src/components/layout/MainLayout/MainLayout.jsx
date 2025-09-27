@@ -17,7 +17,7 @@ export default function MainLayout() {
       <div className="md:pl-80">
         <Header onMenu={() => setMobileOpen(true)} />
         <main className="pt-16 p-4">
-          <div className="max-w-7xl mx-auto">
+          <div className="max-w-7xl mx-auto pt-4">
             <Outlet />
           </div>
         </main>
