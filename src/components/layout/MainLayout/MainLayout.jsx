@@ -1,18 +1,21 @@
-import { Outlet } from "react-router-dom";
-import Sidebar from "../../common/SideBar/Sidebar";
+// src/components/layout/MainLayout/MainLayout.jsx
+import { useEffect, useState } from "react";
+import { Outlet, useLocation } from "react-router-dom";
+import Sidebar, { MobileSidebar } from "../../common/SideBar/Sidebar";
 import Header from "../../common/Header/Header";
 
 export default function MainLayout() {
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const loc = useLocation();
+
+  useEffect(() => setMobileOpen(false), [loc.pathname]);
+
   return (
     <div className="bg-slate-100 min-h-screen">
-      {/* Sidebar fixed on left */}
-      <Sidebar />
-
-      {/* Right side (Header + Content) */}
-      <div className="pl-60"> {/* push right by sidebar width */}
-        <Header />
-
-        {/* Page content */}
+      <Sidebar className="hidden md:block" />
+      <MobileSidebar open={mobileOpen} onClose={() => setMobileOpen(false)} />
+      <div className="md:pl-80">
+        <Header onMenu={() => setMobileOpen(true)} />
         <main className="pt-16 p-4">
           <div className="max-w-7xl mx-auto">
             <Outlet />
