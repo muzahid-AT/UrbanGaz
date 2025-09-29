@@ -1,55 +1,71 @@
 import { GiFlame } from "react-icons/gi";
 import { MdVerified, MdPendingActions, MdOutlineBlock } from "react-icons/md";
 import KPICard, { KPIGrid } from "../../components/common/kpi/KPICard";
-import { Link } from "react-router-dom";
-import { FiList } from "react-icons/fi";
-function DetailRow({ label, children }) {
-  return (
-    <div className="grid grid-cols-12">
-      <div className="col-span-5 md:col-span-5 lg:col-span-5 py-2.5 px-3 font-medium text-slate-700 text-right pr-4">
-        {label}:
-      </div>
-      <div className="col-span-7 md:col-span-7 lg:col-span-7 py-2.5 px-3 border border-slate-200/80 bg-white">
-        {children ?? <span className="text-slate-400">—</span>}
-      </div>
-    </div>
-  );
-}
+import { FiSearch } from "react-icons/fi";
+import { useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import FlatCard from "./FlatCard";
 
-/** Small status badge */
-function Badge({ tone = "success", children }) {
-  const map = {
-    success: "bg-green-100 text-green-700",
-    danger: "bg-rose-100 text-rose-700",
-    info: "bg-blue-100 text-blue-700",
-  };
-  return (
-    <span className={`inline-flex items-center px-2 py-0.5 text-xs font-semibold rounded ${map[tone]}`}>
-      {children}
-    </span>
-  );
-}
-export default function FlatManagement() {
-  
-  const flat = {
-    buildingName: "Building 1",
-    flatName: "F1",
-    floorName: "A4",
-    status: "Active",
-    ownerName: "Uttara",
+const mockFlats = Array.from({ length: 24 }).map((_, i) => {
+  const n = i + 1;
+  const active = n % 3 !== 0; // some inactive
+  return {
+    id: n,
+    buildingName: `Building ${Math.ceil(n / 4)}`,
+    flatName: `F${n}`,
+    floorName: `A${(n % 10) + 1}`,
+    status: active ? "active" : "inactive",
+
+    ownerName: ["Uttara", "Mohakhali", "Banani", "Mirpur"][n % 4],
     ownerPhone: "012345678",
     ownerAddress: "Nikunjo-2, Dhaka-1229",
-    ownerNID: "123456789",
-  };
+    ownerNid: "123456789",
 
-  const renter = {
-    customerName: "A K M Kalam",
-    renterName: "Salman",
+    customerName: ["A K M Kalam", "Shahadat Hossain", "Maliha Rahman"][n % 3],
+    renterName: ["Salman", "Parvez", "Tania"][n % 3],
     renterPhone: "012345678",
     renterAddress: "Nikunjo-2, Dhaka-1229",
-    renterNID: "123456789",
+    renterNid: "123456789",
   };
-  
+});
+
+export default function FlatManagement() {
+const [query, setQuery] = useState("");
+  const [page, setPage] = useState(1);
+  const pageSize = 12;
+  const navigate = useNavigate();
+
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return mockFlats;
+    return mockFlats.filter((f) =>
+      [
+        f.buildingName,
+        f.flatName,
+        f.floorName,
+        f.status,
+        f.ownerName,
+        f.ownerPhone,
+        f.ownerAddress,
+        f.ownerNid,
+        f.customerName,
+        f.renterName,
+        f.renterPhone,
+        f.renterAddress,
+        f.renterNid,
+      ]
+        .join(" ")
+        .toLowerCase()
+        .includes(q)
+    );
+  }, [query]);
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+  const paginated = filtered.slice((page - 1) * pageSize, page * pageSize);
+
+  const openDetails = (flat) => {
+    navigate(`/flats/${flat.id}`, { state: flat });
+  };
   return (
     <>
       <div className="space-y-4">
@@ -81,61 +97,66 @@ export default function FlatManagement() {
         </KPIGrid>
       </div>
       <div className="p-6 bg-white rounded-xl shadow mt-4">
-        <div className="space-y-4">
-      {/* Page header */}
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold text-slate-800">Flat Details</h1>
+      {/* Header */}
+      <div className="flex flex-wrap items-center gap-3 justify-between mb-4">
+        <h1 className="text-lg font-semibold text-slate-800">Flat List</h1>
 
-        <Link
-          to="/flats" // change if your route differs
-          className="inline-flex items-center gap-2 rounded-md bg-green-600 hover:bg-green-700 text-white text-sm px-3 py-2"
-          title="Back to Flat List"
-        >
-          <FiList className="text-base" />
-          Flat List
-        </Link>
+        <form onSubmit={(e) => e.preventDefault()} className="flex">
+          <input
+            type="text"
+            placeholder="Search…"
+            className="h-10 w-72 rounded-l-md border border-slate-300 px-3 outline-none focus:ring-2 focus:ring-orange-500"
+            value={query}
+            onChange={(e) => {
+              setPage(1);
+              setQuery(e.target.value);
+            }}
+          />
+          <button
+            className="h-10 w-10 grid place-items-center rounded-r-md bg-[#1d2a39] text-white"
+            aria-label="Search"
+            type="submit"
+          >
+            <FiSearch />
+          </button>
+        </form>
+        <button
+                type="button"
+                onClick={() => alert("Add New Franchise")}
+                className="h-10 px-3 rounded-md bg-emerald-600 text-white text-sm hover:bg-emerald-700"
+              >
+                + Add New Flat
+              </button>
       </div>
 
-      {/* Content grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Left card – Flat & Owner */}
-        <div className="bg-white border border-slate-200 rounded-lg shadow-sm">
-          <div className="p-3 border-b border-slate-100">
-            <h2 className="text-slate-700 font-semibold">Flat & Owner Info</h2>
-          </div>
-          <div className="p-3">
-            <DetailRow label="Building Name">{flat.buildingName}</DetailRow>
-            <DetailRow label="Flat Name">{flat.flatName}</DetailRow>
-            <DetailRow label="Floor Name">{flat.floorName}</DetailRow>
-            <DetailRow label="Status">
-              <div className="flex items-center gap-2">
-                <Badge tone="success">Active</Badge>
-                <Badge tone="danger">In Active</Badge>
-              </div>
-            </DetailRow>
-            <DetailRow label="Owner Name">{flat.ownerName}</DetailRow>
-            <DetailRow label="Owner Contact Number">{flat.ownerPhone}</DetailRow>
-            <DetailRow label="Owner Address">{flat.ownerAddress}</DetailRow>
-            <DetailRow label="Owner NID">{flat.ownerNID}</DetailRow>
-          </div>
-        </div>
+      {/* Grid */}
+      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {paginated.map((f) => (
+          <FlatCard key={f.id} flat={f} onClick={openDetails} />
+        ))}
+      </div>
 
-        {/* Right card – Renter */}
-        <div className="bg-white border border-slate-200 rounded-lg shadow-sm">
-          <div className="p-3 border-b border-slate-100">
-            <h2 className="text-slate-700 font-semibold">Renter Info</h2>
-          </div>
-          <div className="p-3">
-            <DetailRow label="Customer Name">{renter.customerName}</DetailRow>
-            <DetailRow label="Renter Name">{renter.renterName}</DetailRow>
-            <DetailRow label="Renter Contact Number">{renter.renterPhone}</DetailRow>
-            <DetailRow label="Renter Address">{renter.renterAddress}</DetailRow>
-            <DetailRow label="Renter NID">{renter.renterNID}</DetailRow>
-          </div>
-        </div>
+      {/* Pagination */}
+      <div className="flex items-center justify-end gap-2 pt-4">
+        <button
+          disabled={page === 1}
+          onClick={() => setPage((p) => Math.max(1, p - 1))}
+          className="px-3 h-9 rounded-md border border-slate-300 text-sm disabled:opacity-50"
+        >
+          Previous
+        </button>
+        <span className="inline-flex items-center justify-center w-9 h-9 rounded-md bg-orange-500 text-white text-sm">
+          {page}
+        </span>
+        <button
+          disabled={page === totalPages}
+          onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+          className="px-3 h-9 rounded-md border border-slate-300 text-sm disabled:opacity-50"
+        >
+          Next
+        </button>
       </div>
     </div>
-      </div>
     </>
   );
 }

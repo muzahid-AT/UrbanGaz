@@ -15,6 +15,9 @@ import Payment from "../pages/Payment/Payment";
 import UserManagement from "../pages/UserManagement/UserManagement";
 import Settings from "../pages/Settings/Settings";
 import ProviderWrapper from "./ProviderWrapper";
+import FranchiseDetailsPage from "../pages/FranchiseManagement/FranchiseDetailsPage";
+import BuildingDetailsPage from "../pages/BuildingManagement/BuildingDetailsPage";
+import FlatDetailsPage from "../pages/FlatManagement/FlatDetailsPage";
 
 const router = createBrowserRouter([
   {
@@ -33,8 +36,11 @@ const router = createBrowserRouter([
             children: [
               { index: true, element: <Dashboard /> },
               { path: "franchise", element: <FranchiseManagement /> },
+              { path: "franchise/:id", element: <FranchiseDetailsPage /> },
               { path: "buildings", element: <BuildingManagement /> },
+              { path: "buildings/:id", element: <BuildingDetailsPage /> },
               { path: "flats", element: <FlatManagement /> },
+              { path: "flats/:id", element: <FlatDetailsPage /> },
               { path: "unit-price", element: <UnitPriceSetup /> },
               { path: "meter", element: <MeterReading /> },
               { path: "payment", element: <Payment /> },

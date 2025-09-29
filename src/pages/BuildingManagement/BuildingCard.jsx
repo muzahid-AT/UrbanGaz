@@ -1,42 +1,40 @@
-import {
-  FiMoreVertical,
-  FiMapPin,
-  FiPhone,
-} from "react-icons/fi";
+import { FiHome, FiMapPin, FiPhone } from "react-icons/fi";
 
-export default function FranchiseCard({ franchise, onClick }) {
-  const f = franchise;
+export default function BuildingCard({ building, onClick }) {
+  const b = building;
   return (
     <button
       type="button"
-      onClick={() => onClick?.(f)}
+      onClick={() => onClick?.(b)}
       className="w-full text-left rounded-md border border-slate-200 bg-emerald-50 hover:bg-emerald-100 shadow-sm hover:shadow-md transition focus:outline-none focus:ring-2 focus:ring-emerald-500 cursor-pointer"
     >
-      {/* header row */}
+      {/* header */}
       <div className="px-3 pt-2 flex items-start justify-between">
-        <h3 className="font-semibold text-slate-800">{f.name}</h3>
-        <FiMoreVertical className="text-slate-400" />
+        <h3 className="font-semibold text-slate-800 flex items-center gap-2">
+          <FiHome className="text-emerald-700" /> {b.buildingName}
+        </h3>
+        <span className="text-xs text-slate-500">{b.franchiseName}</span>
       </div>
 
       {/* body */}
       <div className="px-3 pb-3 mt-1 space-y-1 text-sm">
         <div className="flex items-start gap-2 text-slate-700">
           <FiMapPin className="mt-0.5 shrink-0 text-slate-500" />
-          <span className="leading-snug">{f.address}</span>
+          <span className="leading-snug">{b.address}</span>
         </div>
 
         <div className="flex items-center justify-between gap-2 text-slate-700">
           <div className="flex items-center gap-1">
             <FiPhone className="shrink-0 text-slate-500" />
-            <span className="text-orange-600 font-medium">{f.contactPhone}</span>
+            <span className="text-orange-600 font-medium">{b.contactPhone}</span>
           </div>
           <span className="text-slate-600 text-xs">
-            Area: <span className="text-emerald-700 font-medium">{f.area}</span>
+            Flats: <span className="text-emerald-700 font-medium">{b.numberOfFlats}</span>
           </span>
         </div>
       </div>
 
-      {/* colorful bottom bar */}
+      {/* accent bar */}
       <div className="h-1 rounded-b-md bg-emerald-700" />
     </button>
   );

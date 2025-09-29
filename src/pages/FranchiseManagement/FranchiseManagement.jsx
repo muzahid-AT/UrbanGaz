@@ -3,10 +3,11 @@ import { MdVerified, MdPendingActions, MdOutlineBlock } from "react-icons/md";
 import KPICard, { KPIGrid } from "../../components/common/kpi/KPICard";
 import { useMemo, useState } from "react";
 import { FiSearch } from "react-icons/fi";
-import FranchiseCard from "../FranchiseManagement/FranchiseCard";
+import { useNavigate } from "react-router-dom";
+import FranchiseCard from "./FranchiseCard";
 
-/* ---------- Mock data ---------- */
-const mockFranchises = Array.from({ length: 5 }).map((_, i) => {
+/* ---------- Mock data (UNCHANGED) ---------- */
+const mockFranchises = Array.from({ length: 50 }).map((_, i) => {
   const n = i + 1;
   return {
     id: n,
@@ -23,7 +24,8 @@ const mockFranchises = Array.from({ length: 5 }).map((_, i) => {
 export default function FranchiseManagement() {
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
-  const pageSize = 5; // franchises per page
+  const pageSize = 50; // franchises per page
+  const navigate = useNavigate();
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -45,7 +47,8 @@ export default function FranchiseManagement() {
   const paginated = filtered.slice((page - 1) * pageSize, page * pageSize);
 
   const handleOpen = (franchise) => {
-    console.log("Open franchise", franchise);
+    // navigate to details and pass the card data
+    navigate(`/franchise/${franchise.id}`, { state: franchise });
   };
 
   return (
@@ -125,7 +128,7 @@ export default function FranchiseManagement() {
             ))}
           </div>
 
-          {/* Pagination (copied from UnitPriceSetup) */}
+          {/* Pagination (same as UnitPriceSetup) */}
           <div className="flex items-center justify-end gap-2 pt-4">
             <button
               disabled={page === 1}
