@@ -5,6 +5,7 @@ import { useMemo, useState } from "react";
 import { FiSearch } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import FranchiseCard from "./FranchiseCard";
+import FranchiseModal from "../../components/modal/FranchiseModal";
 
 /* ---------- Mock data (UNCHANGED) ---------- */
 const mockFranchises = Array.from({ length: 50 }).map((_, i) => {
@@ -21,9 +22,14 @@ const mockFranchises = Array.from({ length: 50 }).map((_, i) => {
   };
 });
 
+const districts = [
+  "Dhaka", "Chittagong", "Rajshahi", "Khulna", "Barisal", "Sylhet", "Rangpur", "Mymensingh",
+];
+
 export default function FranchiseManagement() {
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
+  const [openModal, setOpenModal] = useState(false);
   const pageSize = 50; // franchises per page
   const navigate = useNavigate();
 
@@ -47,8 +53,13 @@ export default function FranchiseManagement() {
   const paginated = filtered.slice((page - 1) * pageSize, page * pageSize);
 
   const handleOpen = (franchise) => {
-    // navigate to details and pass the card data
     navigate(`/franchise/${franchise.id}`, { state: franchise });
+  };
+
+  const handleSubmitFranchise = (data) => {
+    // For now, just log the payload as requested
+    console.log("New Franchise payload:", data);
+    // Here you could call your API and then refresh list / optimistic update
   };
 
   return (
@@ -56,30 +67,10 @@ export default function FranchiseManagement() {
       {/* KPI Summary */}
       <div className="space-y-4">
         <KPIGrid>
-          <KPICard
-            title="Total Franchise"
-            value="3344"
-            icon={GiFlame}
-            iconBg="from-rose-500 to-orange-500"
-          />
-          <KPICard
-            title="Active Project"
-            value="3344"
-            icon={MdVerified}
-            iconBg="from-emerald-500 to-green-600"
-          />
-          <KPICard
-            title="Pending Project"
-            value="120"
-            icon={MdPendingActions}
-            iconBg="from-yellow-400 to-amber-500"
-          />
-          <KPICard
-            title="Inactive Project"
-            value="87"
-            icon={MdOutlineBlock}
-            iconBg="from-slate-500 to-gray-700"
-          />
+          <KPICard title="Total Franchise" value="3344" icon={GiFlame} iconBg="from-rose-500 to-orange-500" />
+          <KPICard title="Active Project" value="3344" icon={MdVerified} iconBg="from-emerald-500 to-green-600" />
+          <KPICard title="Pending Project" value="120" icon={MdPendingActions} iconBg="from-yellow-400 to-amber-500" />
+          <KPICard title="Inactive Project" value="87" icon={MdOutlineBlock} iconBg="from-slate-500 to-gray-700" />
         </KPIGrid>
       </div>
 
@@ -111,14 +102,15 @@ export default function FranchiseManagement() {
                 </button>
               </form>
 
-              <button
+              
+            </div>
+            <button
                 type="button"
-                onClick={() => alert("Add New Franchise")}
+                onClick={() => setOpenModal(true)}
                 className="h-10 px-3 rounded-md bg-emerald-600 text-white text-sm hover:bg-emerald-700"
               >
                 + Add New Franchise
               </button>
-            </div>
           </div>
 
           {/* Cards grid */}
@@ -128,7 +120,7 @@ export default function FranchiseManagement() {
             ))}
           </div>
 
-          {/* Pagination (same as UnitPriceSetup) */}
+          {/* Pagination */}
           <div className="flex items-center justify-end gap-2 pt-4">
             <button
               disabled={page === 1}
@@ -150,6 +142,14 @@ export default function FranchiseManagement() {
           </div>
         </div>
       </div>
+
+      {/* Modal */}
+      <FranchiseModal
+        open={openModal}
+        onClose={() => setOpenModal(false)}
+        onSubmit={handleSubmitFranchise}
+        districts={districts}
+      />
     </>
   );
 }
