@@ -2,11 +2,11 @@ import { useState, useRef, useEffect } from "react";
 import { FiMenu } from "react-icons/fi";
 import { MdLogout } from "react-icons/md";
 import { useAuth } from "../../../services/Context/useAuth";
-import user from "../../../assets/Images/user-1.jpg"
+import Profile from "../../../assets/Images/user-1.jpg"
 
 
 export default function Header({ onMenu }) {
-  const { logout } = useAuth();
+  const { logout,user } = useAuth();
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -36,7 +36,7 @@ export default function Header({ onMenu }) {
         >
           <FiMenu size={20} />
         </button>
-        <span className="font-semibold text-slate-800">Dashboard</span>
+        <span className="font-semibold text-slate-800">Welcome to {user.email}</span>
       </div>
 
       {/* Right side: Avatar + Dropdown */}
@@ -48,7 +48,7 @@ export default function Header({ onMenu }) {
         >
           {/* fallback initials / image */}
           <img
-            src={user}
+            src={Profile}
             alt="user avatar"
             className="w-full h-full object-cover"
           />
