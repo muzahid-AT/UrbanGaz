@@ -2,9 +2,9 @@
 import UsersList from "./UsersList";
 import RolesMatrix from "./RolesMatrix";
 import UserPermissionMatrix from "./UserPermissionMatrix";
-import { useState } from "react";
+import { useState, useMemo } from "react";
+import AddUserModal from "../../components/modal/AddUserModal";
 
-// ...keep your mockUsers as-is
 function Tab({ active, children, onClick }) {
   return (
     <button
@@ -18,8 +18,9 @@ function Tab({ active, children, onClick }) {
     </button>
   );
 }
+
 /* ---------------- mock data ---------------- */
-const mockUsers = [
+const initialUsers = [
   { id: 1, name: "Alice Johnson", email: "alice.johnson@example.com", phone: "01526834525", roles: ["Admin"], status: ["Active"], createdAt: "20-07-2025", lastLogin: { time: "6:05 PM", date: "20-07-2025" } },
   { id: 2, name: "Bob Smith", email: "bob.smith@example.com", phone: "01712345678", roles: ["Franchise Manager"], status: ["Pending"], createdAt: "19-07-2025", lastLogin: { time: "2:15 PM", date: "19-07-2025" } },
   { id: 3, name: "Charlie Davis", email: "charlie.davis@example.com", phone: "01698765432", roles: ["Admin", "Franchise Manager"], status: ["Suspended"], createdAt: "18-07-2025", lastLogin: { time: "11:45 AM", date: "18-07-2025" } },
@@ -39,8 +40,30 @@ const mockUsers = [
 
 export default function UserManagement() {
   const [activeTab, setActiveTab] = useState("list");
+  const [users, setUsers] = useState(initialUsers);
+  const [openAdd, setOpenAdd] = useState(false);
 
-  const onAddUser = () => alert("Add New User");
+  const franchiseOptions = useMemo(
+    () => ["Franchise A", "Franchise B", "Franchise C", "Franchise D"], // or derive from your data
+    []
+  );
+
+  const handleAddUser = (payload) => {
+    // Convert payload -> new user row
+    const nextId = users.length ? Math.max(...users.map((u) => u.id)) + 1 : 1;
+    const newUser = {
+      id: nextId,
+      name: payload.name,
+      email: payload.email,
+      phone: payload.phone,
+      roles: [payload.role],
+      status: ["Active"],
+      createdAt: new Date().toLocaleDateString("en-GB"), // dd/mm/yyyy
+      lastLogin: { time: "--", date: "--" },
+      // optional: payload.accountType, payload.franchises, payload.profileImage
+    };
+    setUsers((prev) => [newUser, ...prev]);
+  };
 
   return (
     <div className="space-y-4">
@@ -53,14 +76,12 @@ export default function UserManagement() {
 
       {/* Card */}
       <div className="bg-white border border-slate-200 rounded-xl shadow-sm">
-        {/* Content by tab */}
         {activeTab === "list" && (
-          <UsersList users={mockUsers} onAddUser={onAddUser} />
+          <UsersList users={users} onAddUser={() => setOpenAdd(true)} />
         )}
 
         {activeTab === "roles" && (
           <>
-            {/* If you still want a top-right Save button, keep it here or move inside RolesMatrix */}
             <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100">
               <h2 className="text-lg font-semibold text-slate-800">Users Roles</h2>
             </div>
@@ -74,11 +95,20 @@ export default function UserManagement() {
               <h2 className="text-lg font-semibold text-slate-800">Permission Management</h2>
             </div>
             <UserPermissionMatrix
-              users={mockUsers.map(({ id, name, email }) => ({ id, name, email }))}
+              users={users.map(({ id, name, email }) => ({ id, name, email }))}
             />
           </>
         )}
       </div>
+
+      {/* Add User Modal */}
+      <AddUserModal
+        open={openAdd}
+        onClose={() => setOpenAdd(false)}
+        onSubmit={handleAddUser}
+        roles={["Admin", "Franchise Manager", "User"]}
+        franchises={franchiseOptions}
+      />
     </div>
   );
 }

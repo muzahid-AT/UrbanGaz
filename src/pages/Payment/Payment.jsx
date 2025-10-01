@@ -1,344 +1,20 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { FiSearch, FiEdit2, FiPlusCircle } from "react-icons/fi";
+import PaymentModal from "../../components/modal/PaymentModal";
 
+/* ----- Mock data (same shape as yours) ----- */
 const mockPayments = [
-  {
-    id: 1,
-    flat: "Flat A",
-    status: "Paid",
-    paidAmount: 2500,
-    dueAmount: 0,
-    method: "BKash",
-    date: "02-01-2025",
-    franchise: "Franchise A",
-    building: "Building 1",
-  },
-  {
-    id: 2,
-    flat: "Flat B",
-    status: "Due",
-    paidAmount: 1200,
-    dueAmount: 300,
-    method: "Cash",
-    date: "05-01-2025",
-    franchise: "Franchise B",
-    building: "Building 2",
-  },
-  {
-    id: 3,
-    flat: "Flat C",
-    status: "Paid",
-    paidAmount: 1800,
-    dueAmount: 0,
-    method: "Nagad",
-    date: "08-01-2025",
-    franchise: "Franchise C",
-    building: "Building 3",
-  },
-  {
-    id: 4,
-    flat: "Flat D",
-    status: "Due",
-    paidAmount: 0,
-    dueAmount: 2100,
-    method: "Bank",
-    date: "12-01-2025",
-    franchise: "Franchise A",
-    building: "Building 1",
-  },
-  {
-    id: 5,
-    flat: "Flat E",
-    status: "Paid",
-    paidAmount: 3000,
-    dueAmount: 0,
-    method: "BKash",
-    date: "15-01-2025",
-    franchise: "Franchise B",
-    building: "Building 2",
-  },
-  {
-    id: 6,
-    flat: "Flat F",
-    status: "Due",
-    paidAmount: 900,
-    dueAmount: 600,
-    method: "Cash",
-    date: "18-01-2025",
-    franchise: "Franchise C",
-    building: "Building 3",
-  },
-  {
-    id: 7,
-    flat: "Flat G",
-    status: "Paid",
-    paidAmount: 2200,
-    dueAmount: 0,
-    method: "Nagad",
-    date: "22-01-2025",
-    franchise: "Franchise A",
-    building: "Building 1",
-  },
-  {
-    id: 8,
-    flat: "Flat H",
-    status: "Due",
-    paidAmount: 500,
-    dueAmount: 2500,
-    method: "Bank",
-    date: "25-01-2025",
-    franchise: "Franchise B",
-    building: "Building 2",
-  },
-  {
-    id: 9,
-    flat: "Flat I",
-    status: "Paid",
-    paidAmount: 2700,
-    dueAmount: 0,
-    method: "BKash",
-    date: "28-01-2025",
-    franchise: "Franchise C",
-    building: "Building 3",
-  },
-  {
-    id: 10,
-    flat: "Flat J",
-    status: "Due",
-    paidAmount: 0,
-    dueAmount: 1800,
-    method: "Cash",
-    date: "01-02-2025",
-    franchise: "Franchise A",
-    building: "Building 1",
-  },
-  // -----------------------------
-  // Keep generating in same style until 50
-  // -----------------------------
-  {
-    id: 11,
-    flat: "Flat K",
-    status: "Paid",
-    paidAmount: 1950,
-    dueAmount: 0,
-    method: "Nagad",
-    date: "03-02-2025",
-    franchise: "Franchise B",
-    building: "Building 2",
-  },
-  {
-    id: 12,
-    flat: "Flat L",
-    status: "Due",
-    paidAmount: 700,
-    dueAmount: 1300,
-    method: "Bank",
-    date: "06-02-2025",
-    franchise: "Franchise C",
-    building: "Building 3",
-  },
-  {
-    id: 13,
-    flat: "Flat M",
-    status: "Paid",
-    paidAmount: 3100,
-    dueAmount: 0,
-    method: "BKash",
-    date: "10-02-2025",
-    franchise: "Franchise A",
-    building: "Building 1",
-  },
-  {
-    id: 14,
-    flat: "Flat N",
-    status: "Due",
-    paidAmount: 400,
-    dueAmount: 2400,
-    method: "Cash",
-    date: "13-02-2025",
-    franchise: "Franchise B",
-    building: "Building 2",
-  },
-  {
-    id: 15,
-    flat: "Flat O",
-    status: "Paid",
-    paidAmount: 2750,
-    dueAmount: 0,
-    method: "Nagad",
-    date: "16-02-2025",
-    franchise: "Franchise C",
-    building: "Building 3",
-  },
-  {
-    id: 16,
-    flat: "Flat P",
-    status: "Due",
-    paidAmount: 1000,
-    dueAmount: 900,
-    method: "Bank",
-    date: "19-02-2025",
-    franchise: "Franchise A",
-    building: "Building 1",
-  },
-  {
-    id: 17,
-    flat: "Flat Q",
-    status: "Paid",
-    paidAmount: 3500,
-    dueAmount: 0,
-    method: "BKash",
-    date: "22-02-2025",
-    franchise: "Franchise B",
-    building: "Building 2",
-  },
-  {
-    id: 18,
-    flat: "Flat R",
-    status: "Due",
-    paidAmount: 0,
-    dueAmount: 1600,
-    method: "Cash",
-    date: "25-02-2025",
-    franchise: "Franchise C",
-    building: "Building 3",
-  },
-  {
-    id: 19,
-    flat: "Flat S",
-    status: "Paid",
-    paidAmount: 2900,
-    dueAmount: 0,
-    method: "Nagad",
-    date: "28-02-2025",
-    franchise: "Franchise A",
-    building: "Building 1",
-  },
-  {
-    id: 20,
-    flat: "Flat T",
-    status: "Due",
-    paidAmount: 600,
-    dueAmount: 1400,
-    method: "Bank",
-    date: "03-03-2025",
-    franchise: "Franchise B",
-    building: "Building 2",
-  },
-  {
-    id: 21,
-    flat: "Flat U",
-    status: "Paid",
-    paidAmount: 2100,
-    dueAmount: 0,
-    method: "BKash",
-    date: "06-03-2025",
-    franchise: "Franchise C",
-    building: "Building 3",
-  },
-  {
-    id: 22,
-    flat: "Flat V",
-    status: "Due",
-    paidAmount: 0,
-    dueAmount: 1900,
-    method: "Cash",
-    date: "09-03-2025",
-    franchise: "Franchise A",
-    building: "Building 1",
-  },
-  {
-    id: 23,
-    flat: "Flat W",
-    status: "Paid",
-    paidAmount: 2600,
-    dueAmount: 0,
-    method: "Nagad",
-    date: "12-03-2025",
-    franchise: "Franchise B",
-    building: "Building 2",
-  },
-  {
-    id: 24,
-    flat: "Flat X",
-    status: "Due",
-    paidAmount: 800,
-    dueAmount: 1200,
-    method: "Bank",
-    date: "15-03-2025",
-    franchise: "Franchise C",
-    building: "Building 3",
-  },
-  {
-    id: 25,
-    flat: "Flat Y",
-    status: "Paid",
-    paidAmount: 3200,
-    dueAmount: 0,
-    method: "BKash",
-    date: "18-03-2025",
-    franchise: "Franchise A",
-    building: "Building 1",
-  },
-  {
-    id: 26,
-    flat: "Flat Z",
-    status: "Due",
-    paidAmount: 200,
-    dueAmount: 2800,
-    method: "Cash",
-    date: "21-03-2025",
-    franchise: "Franchise B",
-    building: "Building 2",
-  },
-  {
-    id: 27,
-    flat: "Flat A",
-    status: "Paid",
-    paidAmount: 2450,
-    dueAmount: 0,
-    method: "Nagad",
-    date: "24-03-2025",
-    franchise: "Franchise C",
-    building: "Building 3",
-  },
-  {
-    id: 28,
-    flat: "Flat B",
-    status: "Due",
-    paidAmount: 950,
-    dueAmount: 1050,
-    method: "Bank",
-    date: "27-03-2025",
-    franchise: "Franchise A",
-    building: "Building 1",
-  },
-  {
-    id: 29,
-    flat: "Flat C",
-    status: "Paid",
-    paidAmount: 2800,
-    dueAmount: 0,
-    method: "BKash",
-    date: "30-03-2025",
-    franchise: "Franchise B",
-    building: "Building 2",
-  },
-  {
-    id: 30,
-    flat: "Flat D",
-    status: "Due",
-    paidAmount: 500,
-    dueAmount: 1500,
-    method: "Cash",
-    date: "02-04-2025",
-    franchise: "Franchise C",
-    building: "Building 3",
-  },
-  // … continue same structure until id: 50
+  { id: 1,  flat: "Flat A", status: "Paid", paidAmount: 2500, dueAmount: 0,    method: "BKash", date: "02-01-2025", franchise: "Franchise A", building: "Building 1" },
+  { id: 2,  flat: "Flat B", status: "Due",  paidAmount: 1200, dueAmount: 300,  method: "Cash",  date: "05-01-2025", franchise: "Franchise B", building: "Building 2" },
+  { id: 3,  flat: "Flat C", status: "Paid", paidAmount: 1800, dueAmount: 0,    method: "Nagad", date: "08-01-2025", franchise: "Franchise C", building: "Building 3" },
+  { id: 4,  flat: "Flat D", status: "Due",  paidAmount: 0,    dueAmount: 2100, method: "Bank",  date: "12-01-2025", franchise: "Franchise A", building: "Building 1" },
+  { id: 5,  flat: "Flat E", status: "Paid", paidAmount: 3000, dueAmount: 0,    method: "BKash", date: "15-01-2025", franchise: "Franchise B", building: "Building 2" },
+  { id: 6,  flat: "Flat F", status: "Due",  paidAmount: 900,  dueAmount: 600,  method: "Cash",  date: "18-01-2025", franchise: "Franchise C", building: "Building 3" },
+  { id: 7,  flat: "Flat G", status: "Paid", paidAmount: 2200, dueAmount: 0,    method: "Nagad", date: "22-01-2025", franchise: "Franchise A", building: "Building 1" },
+  { id: 8,  flat: "Flat H", status: "Due",  paidAmount: 500,  dueAmount: 2500, method: "Bank",  date: "25-01-2025", franchise: "Franchise B", building: "Building 2" },
+  { id: 9,  flat: "Flat I", status: "Paid", paidAmount: 2700, dueAmount: 0,    method: "BKash", date: "28-01-2025", franchise: "Franchise C", building: "Building 3" },
+  { id: 10, flat: "Flat J", status: "Due",  paidAmount: 0,    dueAmount: 1800, method: "Cash",  date: "01-02-2025", franchise: "Franchise A", building: "Building 1" },
 ];
-const franchises = ["Franchise A", "Franchise B", "Franchise C"];
-const buildings = ["Building 1", "Building 2", "Building 3"];
 
 function Badge({ children, tone = "success" }) {
   const map = {
@@ -353,30 +29,87 @@ function Badge({ children, tone = "success" }) {
   );
 }
 
+function toDDMMYYYY(yyyyMmDd) {
+  if (!yyyyMmDd) return "";
+  const [y, m, d] = yyyyMmDd.split("-");
+  return `${d}-${m}-${y}`;
+}
+
 export default function Payment() {
+  const [rows, setRows] = useState(mockPayments);
   const [query, setQuery] = useState("");
   const [franchise, setFranchise] = useState("");
   const [building, setBuilding] = useState("");
+  const [open, setOpen] = useState(false);
 
   // pagination
   const [page, setPage] = useState(1);
   const pageSize = 8;
 
+  // derive selects & dependency maps from rows
+  const franchiseOptions = useMemo(
+    () => Array.from(new Set(rows.map((r) => r.franchise))).sort(),
+    [rows]
+  );
+
+  const buildingsByFranchise = useMemo(() => {
+    const map = {};
+    rows.forEach((r) => {
+      if (!map[r.franchise]) map[r.franchise] = new Set();
+      map[r.franchise].add(r.building);
+    });
+    const out = {};
+    Object.keys(map).forEach((f) => (out[f] = Array.from(map[f]).sort()));
+    return out;
+  }, [rows]);
+
+  const buildingOptions = useMemo(() => {
+    if (!franchise) {
+      const s = new Set(rows.map((r) => r.building));
+      return Array.from(s).sort();
+    }
+    return buildingsByFranchise[franchise] || [];
+  }, [rows, buildingsByFranchise, franchise]);
+
+  const flatsByBuilding = useMemo(() => {
+    const map = {};
+    rows.forEach((r) => {
+      if (!map[r.building]) map[r.building] = new Set();
+      map[r.building].add(r.flat);
+    });
+    const out = {};
+    Object.keys(map).forEach((b) => (out[b] = Array.from(map[b]).sort()));
+    return out;
+  }, [rows]);
+
+  // helpful reverse map to assign building for each flat when inserting new rows
+  const flatToBuilding = useMemo(() => {
+    const m = {};
+    rows.forEach((r) => {
+      if (!m[r.flat]) m[r.flat] = r.building;
+    });
+    return m;
+  }, [rows]);
+
+  useEffect(() => {
+    if (building && !buildingOptions.includes(building)) setBuilding("");
+  }, [buildingOptions, building]);
+
   const filtered = useMemo(() => {
-    let rows = mockPayments;
-    if (franchise) rows = rows.filter(r => r.franchise === franchise);
-    if (building) rows = rows.filter(r => r.building === building);
+    let list = rows;
+    if (franchise) list = list.filter((r) => r.franchise === franchise);
+    if (building) list = list.filter((r) => r.building === building);
     if (query.trim()) {
       const q = query.toLowerCase();
-      rows = rows.filter(
-        r =>
+      list = list.filter(
+        (r) =>
           r.flat.toLowerCase().includes(q) ||
           r.method.toLowerCase().includes(q) ||
           r.date.toLowerCase().includes(q)
       );
     }
-    return rows;
-  }, [query, franchise, building]);
+    return list;
+  }, [rows, query, franchise, building]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
   const current = filtered.slice((page - 1) * pageSize, page * pageSize);
@@ -386,6 +119,30 @@ export default function Payment() {
     setPage(1);
   };
 
+  const handleAddPayment = (payload) => {
+    console.log("Payment (multi) received in parent:", payload);
+    const baseId = rows.length ? Math.max(...rows.map((r) => r.id)) : 0;
+
+    const newRows = payload.flats.map((fl, idx) => ({
+      id: baseId + idx + 1,
+      flat: fl,
+      status: "Paid",
+      paidAmount: payload.amount,
+      dueAmount: 0,
+      method: payload.method,
+      date: toDDMMYYYY(payload.date),
+      // choose franchise heuristic: if only one selected, use it; else keep existing row's franchise if known, else first selected
+      franchise:
+        payload.franchises.length === 1
+          ? payload.franchises[0]
+          : (rows.find((r) => r.flat === fl)?.franchise ?? payload.franchises[0]),
+      // building via reverse map fallback
+      building: flatToBuilding[fl] ?? (payload.buildings[0] || ""),
+    }));
+
+    setRows((prev) => [...newRows, ...prev]);
+  };
+
   return (
     <div className="bg-white border border-slate-200 rounded-xl shadow-sm">
       {/* Header / Add Payment */}
@@ -393,7 +150,7 @@ export default function Payment() {
         <h2 className="text-lg font-semibold text-slate-800">View Payment</h2>
         <button
           className="inline-flex items-center gap-2 px-3 py-2 rounded-md bg-green-600 text-white text-sm hover:bg-green-700"
-          onClick={() => alert("Add Payment clicked")}
+          onClick={() => setOpen(true)}
         >
           <FiPlusCircle className="text-base" />
           Add Payment
@@ -408,11 +165,18 @@ export default function Payment() {
           </span>
           <select
             value={franchise}
-            onChange={(e) => { setFranchise(e.target.value); setPage(1); }}
+            onChange={(e) => {
+              setFranchise(e.target.value);
+              setPage(1);
+            }}
             className="w-full md:w-80 h-10 rounded-md border border-slate-300 px-3 outline-none focus:ring-2 focus:ring-orange-500"
           >
             <option value="">Select option</option>
-            {franchises.map(f => <option key={f} value={f}>{f}</option>)}
+            {franchiseOptions.map((f) => (
+              <option key={f} value={f}>
+                {f}
+              </option>
+            ))}
           </select>
         </label>
 
@@ -422,11 +186,18 @@ export default function Payment() {
           </span>
           <select
             value={building}
-            onChange={(e) => { setBuilding(e.target.value); setPage(1); }}
+            onChange={(e) => {
+              setBuilding(e.target.value);
+              setPage(1);
+            }}
             className="w-full md:w-80 h-10 rounded-md border border-slate-300 px-3 outline-none focus:ring-2 focus:ring-orange-500"
           >
             <option value="">Select option</option>
-            {buildings.map(b => <option key={b} value={b}>{b}</option>)}
+            {buildingOptions.map((b) => (
+              <option key={b} value={b}>
+                {b}
+              </option>
+            ))}
           </select>
         </label>
       </div>
@@ -513,11 +284,9 @@ export default function Payment() {
         >
           Previous
         </button>
-
         <span className="inline-flex items-center justify-center w-9 h-9 rounded-md bg-orange-500 text-white text-sm">
           {page}
         </span>
-
         <button
           disabled={page === totalPages}
           onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
@@ -526,6 +295,16 @@ export default function Payment() {
           Next
         </button>
       </div>
+
+      {/* Modal */}
+      <PaymentModal
+        open={open}
+        onClose={() => setOpen(false)}
+        onSubmit={handleAddPayment}
+        franchises={franchiseOptions}
+        buildingsByFranchise={buildingsByFranchise}
+        flatsByBuilding={flatsByBuilding}
+      />
     </div>
   );
 }
