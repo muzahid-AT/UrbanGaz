@@ -18,6 +18,7 @@ import ProviderWrapper from "./ProviderWrapper";
 import FranchiseDetailsPage from "../pages/FranchiseManagement/FranchiseDetailsPage";
 import BuildingDetailsPage from "../pages/BuildingManagement/BuildingDetailsPage";
 import FlatDetailsPage from "../pages/FlatManagement/FlatDetailsPage";
+import MeterReadingDetails from "../pages/MeterReading/MeterReadingDetails";
 
 const router = createBrowserRouter([
   {
@@ -43,6 +44,7 @@ const router = createBrowserRouter([
               { path: "flats/:id", element: <FlatDetailsPage /> },
               { path: "unit-price", element: <UnitPriceSetup /> },
               { path: "meter", element: <MeterReading /> },
+              { path: "meter/:id", element: <MeterReadingDetails /> },
               { path: "payment", element: <Payment /> },
               { path: "users", element: <UserManagement /> },
               { path: "settings", element: <Settings /> },
