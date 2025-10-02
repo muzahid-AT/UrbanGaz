@@ -60,6 +60,13 @@ export default function Header({ onMenu }) {
             className="absolute right-0 mt-2 w-40 bg-white shadow-lg rounded-md border border-slate-200 py-1 z-50"
           >
             <button
+              // onClick={logout}
+              className="flex items-center gap-2 w-full px-4 py-2 text-sm text-slate-700 hover:bg-red-50 hover:text-red-600"
+            >
+              <MdLogout size={16} />
+              Profile
+            </button>
+            <button
               onClick={logout}
               className="flex items-center gap-2 w-full px-4 py-2 text-sm text-slate-700 hover:bg-red-50 hover:text-red-600"
             >
